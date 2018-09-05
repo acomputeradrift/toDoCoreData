@@ -40,26 +40,18 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     @objc
     func insertNewObject(_ sender: Any) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let newToDo = getNewToDo()
+        getNewToDo()
              
         // If appropriate, configure the new managed object.
         //newToDo.timestamp = Date()
 
         // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
+       
     }
     
-    func getNewToDo () -> ToDo{
+    func getNewToDo () {
         let context = self.fetchedResultsController.managedObjectContext
-        let newToDo = ToDo(context: context)
+       
         var myAlert = UIAlertController()
         
         myAlert = UIAlertController(title: "New ToDo", message: "Please enter the details of your new ToDo.", preferredStyle: .alert)
@@ -73,12 +65,20 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let submitAction = UIAlertAction(title: "Add", style: .default, handler: { (alert) -> Void in
             let titleTextField = myAlert.textFields![0] as UITextField
             let descriptionTextField = myAlert.textFields![1] as UITextField
+            let newToDo = ToDo(context: context)
             newToDo.title = titleTextField.text
             newToDo.toDoDescription = descriptionTextField.text
+            do {
+                try context.save()
+            } catch {
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+            
         })
-            myAlert.addAction(submitAction)
+        myAlert.addAction(submitAction)
         self.present(myAlert, animated: true, completion: nil)
-        return newToDo
+        
     }
 
     // MARK: - Segues
