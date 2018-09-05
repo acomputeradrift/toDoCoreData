@@ -25,6 +25,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+            UserDefaults.standard.set("Title", forKey: "title")
+            UserDefaults.standard.set("Priority", forKey: "priority")
+            UserDefaults.standard.set("Description", forKey: "description")
         }
     }
 
@@ -57,16 +60,21 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         myAlert = UIAlertController(title: "New ToDo", message: "Please enter the details of your new ToDo.", preferredStyle: .alert)
         
         myAlert.addTextField { (textFields) in
-            textFields.placeholder = "...title here..."
+            textFields.placeholder = UserDefaults.standard.string(forKey: "title") ?? ""
         }
         myAlert.addTextField { (textFields) in
-            textFields.placeholder = "...description here..."
+            textFields.placeholder = UserDefaults.standard.string(forKey: "priority") ?? ""
+        }
+        myAlert.addTextField { (textFields) in
+            textFields.placeholder = UserDefaults.standard.string(forKey: "description") ?? ""
         }
         let submitAction = UIAlertAction(title: "Add", style: .default, handler: { (alert) -> Void in
             let titleTextField = myAlert.textFields![0] as UITextField
-            let descriptionTextField = myAlert.textFields![1] as UITextField
+            let priorityTextField = myAlert.textFields![1] as UITextField
+            let descriptionTextField = myAlert.textFields![2] as UITextField
             let newToDo = ToDo(context: context)
             newToDo.title = titleTextField.text
+            newToDo.title = priorityTextField.text
             newToDo.toDoDescription = descriptionTextField.text
             do {
                 try context.save()
