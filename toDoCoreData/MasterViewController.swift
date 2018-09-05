@@ -41,7 +41,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     @objc
     func insertNewObject(_ sender: Any) {
         let context = self.fetchedResultsController.managedObjectContext
-        var newToDo = getNewToDo()
+        let newToDo = getNewToDo()
              
         // If appropriate, configure the new managed object.
         //newToDo.timestamp = Date()
@@ -60,17 +60,24 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func getNewToDo () -> ToDo{
         let context = self.fetchedResultsController.managedObjectContext
         let newToDo = ToDo(context: context)
-        var alert = UIAlertController()
-        alert = UIAlertController(title: "New ToDo", message: "Please enter the details of your new ToDo.", preferredStyle: .alert)
-        alert.addTextField { (titleTextField) in
-            titleTextField.placeholder = "...title here..."
+        var myAlert = UIAlertController()
+        
+        myAlert = UIAlertController(title: "New ToDo", message: "Please enter the details of your new ToDo.", preferredStyle: .alert)
+        
+        myAlert.addTextField { (textFields) in
+            textFields.placeholder = "...title here..."
         }
-        alert.addTextField { (descriptionTextField) in
-            descriptionTextField.placeholder = "...description here..."
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Add", comment: "Default action"), style: .default))
+        myAlert.addTextField { (textFields) in
+            textFields.placeholder = "...description here..."
         }
-        self.present(alert, animated: true, completion: nil)
-        newToDo.title = "this is a test"
+        let submitAction = UIAlertAction(title: "Add", style: .default, handler: { (alert) -> Void in
+            let titleTextField = myAlert.textFields![0] as UITextField
+            let descriptionTextField = myAlert.textFields![1] as UITextField
+            newToDo.title = titleTextField.text
+            newToDo.toDoDescription = descriptionTextField.text
+        })
+            myAlert.addAction(submitAction)
+        self.present(myAlert, animated: true, completion: nil)
         return newToDo
     }
 
